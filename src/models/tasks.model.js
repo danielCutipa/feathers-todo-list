@@ -12,7 +12,8 @@ module.exports = function (app) {
     },
     complete: {
       type: DataTypes.BOOLEAN,
-      allowNull: false
+      allowNull: true,
+      defaultValue: false
     },
   }, {
     hooks: {

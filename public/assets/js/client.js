@@ -51,64 +51,55 @@ const listsHTML = `
   </header>
 </div>
 
-<div class="row d-flex justify-content-center">
-  <div class="col-lg-4">
-    <form class="form-inline" id="send-list">
-      <div class="form-group">
-        <input type="text" name="input-add-list" class="form-control" placeholder="Create new list">
-      </div>
-      <button class="btn btn-primary" type="submit">Create</button>
-    </form>
-  </div>
-</div>
 
 <div class="row">
   <div class="col-lg-4">
     <h4 class="text-center">
       <span class="font-600 online-count">0</span> users
     </h4>
-
     <ul class="list-group list-group-flush user-list"></ul>
-
     <a href="#" id="logout" class="btn btn-danger btn-block">
       Sign Out
     </a>
   </div>
-</div>
-<div class="row lists">
-  
-</div>
-`;
+
+  <div class=col-lg-8>
+    <div class="row d-flex justify-content-center my-2">
+      <div class="col-lg-12">
+        <form class="form-inline" id="send-task">
+          <div class="form-group">
+            <input type="text" name="input-add-task" class="form-control" placeholder="Create new Task">
+          </div>
+          <button class="btn btn-primary" type="submit">Create</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="card">
+          <div class="card-body">
+            
+            <h4 class="mr-auto">To Do List</h4>
+            
+            <div class="list-group ul-lists">
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>`;
 
 const modalListHTML = `
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <input type="text" name="input-edit-list" class="form-control">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary edit-list" data-dismiss="modal">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-const modalTaskHTML = `
-<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModal1Label" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModal1Label">Edit</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Edit Task</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -151,64 +142,36 @@ const addUser = user => {
 };
 
 // Renders a list to the page
-const addLists = list => {
-  const lists = document.querySelector('.lists');
+const addTasks = task => {
+  const taskList = document.querySelector('.ul-lists');
   // Escape HTML to prevent XSS attacks
-  const text = escape(list.text);
-  var tasks = '';
-  if (list.tasks) {
-    list.tasks.forEach(task => {
-      tasks += `
-      <li class="list-group-item d-flex justify-content-between">
-        <span>${task.text}</span>
-        <div>
-          <button type="button" data-id="${task.id}" class="btn btn-info btn-sm edit-task-modal" data-toggle="modal" data-target="#exampleModal">edit</button>
-          <button type="button" data-id="${task.id}" class="btn btn-danger btn-sm delete-task">delete</button>
-        </div>
-      </li>`;
-    });
+  var text = escape(task.text);
+  const id = task.id;
+
+  if (task.complete) {
+    text = `<s>${text}</s>`;
+  } else {
+    text = text;
   }
 
-  if (lists) {
-    lists.innerHTML += `
-    <div class="col-lg-4 list-id-${list.id}">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex">
-            <h4 class="mr-auto">${text}</h4>
-            <div>
-              <button type="button" data-id="${list.id}" class="btn btn-info btn-sm edit-list-modal" data-toggle="modal" data-target="#exampleModal">edit</button>
-              <button type="button" data-id="${list.id}" class="btn btn-danger btn-sm delete-list">delete</button>
-            </div>
-          </div>
-          
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="New task">
-            <div class="input-group-append">
-              <button class="btn btn-primary add-task" data-id="${list.id}" type="button">Save</button>
-            </div>
-          </div>
-          <ul class="list-group">${tasks}</ul>
-        </div>
+  if (taskList) {
+    taskList.innerHTML += `
+    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between list-id-${id}" data-id="${id}">
+      <span>${text}</span>
+      <div>
+        <button type="button" data-id="${id}" class="btn btn-info btn-sm edit-task-modal" data-toggle="modal" data-target="#exampleModal">edit</button>
+        <button type="button" data-id="${id}" class="btn btn-danger btn-sm delete-task">delete</button>
       </div>
-    </div>`;
+    </a>`;
   }
 };
-const editLists = list => {
+const patchTasks = list => {
   const listElement = document.querySelector('.list-id-' + list.id);
-  console.log(listElement);
-  listElement.getElementsByTagName("h4")[0].innerHTML = list.text;
+  listElement.getElementsByTagName("span")[0].innerHTML = list.text;
 };
-const removeLists = list => {
+const removeTasks = list => {
   const listElement = document.querySelector('.list-id-' + list.id);
   listElement.remove();
-};
-const addTasks = task => {
-  // The user that sent this task (added by the populate-user hook)
-  const { user = {} } = task;
-  // const lists = document.querySelector('.lists');
-  // // Escape HTML to prevent XSS attacks
-  // const text = escape(task.text);
 };
 
 // Show the login page
@@ -231,12 +194,12 @@ const emptyErrorMessage = (error) => {
 }
 
 // Shows the chat page
-const showLists = async () => {
+const showTasks = async () => {
   document.getElementById('app').innerHTML = listsHTML;
   document.getElementById('app').innerHTML += modalListHTML;
 
-  // Find the latest 25 lists. They will come with the newest first
-  const lists = await client.service('lists').find({
+  // Find the latest 25 tasks. They will come with the newest first
+  const taskList = await client.service('tasks').find({
     query: {
       $sort: { createdAt: -1 },
       $limit: 25
@@ -244,7 +207,7 @@ const showLists = async () => {
   });
 
   // We want to show the newest message last
-  lists.data.reverse().forEach(addLists);
+  taskList.data.reverse().forEach(addTasks);
 
   // Find all users
   const users = await client.service('users').find();
@@ -278,7 +241,7 @@ const login = async credentials => {
     }
 
     // If successful, show the chat page
-    showLists();
+    showTasks();
   } catch (error) {
     // If we got an error, show the login page
     showLogin(error);
@@ -321,30 +284,49 @@ addEventListener('#logout', 'click', async () => {
   document.getElementById('app').innerHTML = loginHTML;
 });
 
-addEventListener('.edit-list-modal', 'click', async (e) => {
-  const id = e.target.dataset.id;
-  const list = await client.service('lists').get(id);
-  document.querySelector('[name="input-edit-list"]').value = list.text;
-  document.querySelector('button.edit-list').setAttribute('data-id', list.id);
+// toogle complete or uncomplete
+addEventListener('.list-group-item-action', 'click', async (e) => {
+  try {
+    const id = e.target.dataset.id;
+    const task = await client.service('tasks').get(id);
+    const nose = await client.service('tasks').patch(id, {
+      text: task.text,
+      complete: task.complete ? 0 : 1
+    });
+    var text = escape(task.text);
+
+    if (task.complete) {
+      text = `<s>${text}</s>`;
+    } else {
+      text = text;
+    }
+    e.target.getElementsByTagName("span")[0].innerHTML = text;
+  } catch (error) { }
 });
-addEventListener('.edit-list', 'click', async (e) => {
+addEventListener('.edit-task-modal', 'click', async (e) => {
   const id = e.target.dataset.id;
-  const input = document.querySelector('[name="input-edit-list"]');
-  await client.service('lists').update(id, {
+  const task = await client.service('tasks').get(id);
+  document.querySelector('[name="input-edit-task"]').value = task.text;
+  document.querySelector('button.edit-task').setAttribute('data-id', task.id);
+});
+addEventListener('.edit-task', 'click', async (e) => {
+  const id = e.target.dataset.id;
+  const input = document.querySelector('[name="input-edit-task"]');
+  await client.service('tasks').patch(id, {
     text: input.value
   });
 });
-addEventListener('.delete-list', 'click', async (e) => {
+addEventListener('.delete-task', 'click', async (e) => {
   const id = e.target.dataset.id;
-  await client.service('lists').remove(id);
+  await client.service('tasks').remove(id);
 });
 
 
-addEventListener('#send-list', 'submit', async ev => {
-  const input = document.querySelector('[name="input-add-list"]');
+addEventListener('#send-task', 'submit', async ev => {
+  const input = document.querySelector('[name="input-add-task"]');
   ev.preventDefault();
   if (input.value.length) {
-    await client.service('lists').create({
+    await client.service('tasks').create({
       text: input.value
     });
     input.value = '';
@@ -366,9 +348,8 @@ addEventListener('.add-task', 'click', async ev => {
 
 // Listen to created events and add the new task and list in real-time
 client.service('tasks').on('created', addTasks);
-client.service('lists').on('created', addLists);
-client.service('lists').on('updated', editLists);
-client.service('lists').on('removed', removeLists);
+client.service('tasks').on('patched', patchTasks);
+client.service('tasks').on('removed', removeTasks);
 
 // We will also see when new users get created in real-time
 client.service('users').on('created', addUser);
