@@ -4,8 +4,6 @@ exports.Tasks = class Tasks extends Service {
   create(data, params) {
 
     const { listId, text } = data;
-    console.log(listId);
-    console.log(data);
     const complete = false;
     const taskData = {
       listId,
